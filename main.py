@@ -1,16 +1,13 @@
-# This is a sample Python script.
 
-# Press Ctrl+F5 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import streamlit as st
+import mysql.connector
 
+connection = mysql.connector.connect(
+    host=st.secrets["mysql"]["host"],
+    user=st.secrets["mysql"]["user"],
+    password=st.secrets["mysql"]["password"],
+    port=st.secrets["mysql"]["port"],
+    database=st.secrets["mysql"]["database"],
+)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press F9 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+print('connected')
