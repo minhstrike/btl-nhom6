@@ -15,46 +15,14 @@ queries = {
     "Xem danh sách các tuyến xe": "SELECT * FROM TUYEN_XE",
     "Xem danh sách các chuyến xe": "SELECT * FROM CHUYEN_XE",
     "Xem lương của các tài xế": """
-        WITH LuongVaiTroLaiXe AS (
-            SELECT
-                cx.LaiXe_CMT AS CMT,
-                SUM(
-                    100000 * CASE tx.CapPhucTap
-                        WHEN 1 THEN 1.0
-                        WHEN 2 THEN 1.25
-                        WHEN 3 THEN 1.5
-                    END * 2
-                ) AS LuongLaiXe
-            FROM CHUYEN_XE cx
-            JOIN TUYEN_XE tx ON cx.MaTuyen = tx.MaTuyen
-            WHERE MONTH(cx.NgayChay) = MONTH(CURDATE())
-                AND YEAR(cx.NgayChay) = YEAR(CURDATE())
-            GROUP BY cx.LaiXe_CMT
-        ),
-        LuongVaiTroPhuXe AS (
-            SELECT
-                cx.PhuXe_CMT AS CMT,
-                SUM(
-                    100000 * CASE tx.CapPhucTap
-                        WHEN 1 THEN 1.0
-                        WHEN 2 THEN 1.25
-                        WHEN 3 THEN 1.5
-                    END
-                ) AS LuongPhuXe
-            FROM CHUYEN_XE cx
-            JOIN TUYEN_XE tx ON cx.MaTuyen = tx.MaTuyen
-            WHERE MONTH(cx.NgayChay) = MONTH(CURDATE())
-                AND YEAR(cx.NgayChay) = YEAR(CURDATE())
-            GROUP BY cx.PhuXe_CMT
-        )
-        SELECT
-            t.CMT,
-            t.Hoten AS TenNhanVien,
-            COALESCE(l.LuongLaiXe, 0) + COALESCE(p.LuongPhuXe, 0) AS TongLuongThang
-        FROM TAI_XE t
-        LEFT JOIN LuongVaiTroLaiXe l ON t.CMT = l.CMT
-        LEFT JOIN LuongVaiTroPhuXe p ON t.CMT = p.CMT
-        ORDER BY TongLuongThang DESC, TenNhanVien ASC
+        SELECT 
+            x.bien_so AS 'BienSo',
+            COALESCE(SUM(c.so_khach * c.gia_ve), 0) AS 'TongDoanhThu'
+        FROM XE_KHACH x
+        LEFT JOIN CHUYEN_XE c ON x.bien_so = c.bien_so 
+            AND MONTH(c.ngay_khoi_hanh) = MONTH(CURRENT_DATE()) 
+            AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
+        GROUP BY x.bien_so;
     """,
 }
 selected_query = st.selectbox("Chọn truy vấn cần xem", list(queries))
