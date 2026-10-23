@@ -39,8 +39,9 @@ query = {
         """,
 }
 
-selected_table = st.selectbox("Chọn bảng cần xem", list(table))
-selected_query = st.selectbox("Chọn truy vấn cần xem", list(query))
+col_table, col_query = st.columns(2)
+with col_table: selected_table = st.selectbox("Chọn bảng cần xem", list(table))
+with col_query: selected_query = st.selectbox("Chọn truy vấn cần xem", list(query))
 
 try:
     cursor = connection.cursor(dictionary=True)
