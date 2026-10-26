@@ -1,17 +1,7 @@
-
-from table_queries import table, query
 import streamlit as st
-import mysql.connector
+from table_queries import table, query
+from db import init_connection
 
-@st.cache_resource
-def init_connection():
-    return mysql.connector.connect(
-        host=st.secrets["mysql"]["host"],
-        user=st.secrets["mysql"]["user"],
-        password=st.secrets["mysql"]["password"],
-        port=st.secrets["mysql"]["port"],
-        database=st.secrets["mysql"]["database"],
-    )
 connection = init_connection()
 
 col_table, col_query = st.columns(2)
@@ -30,10 +20,10 @@ finally:
 
 
 st.title(selected_table)
-if table_rows: st.dataframe( table_rows, use_container_width=True)
+if table_rows: st.dataframe(table_rows, width="stretch")
 else: st.info("Bảng không có dữ liệu.")
 
 st.title(selected_query)
-if query_rows: st.dataframe( query_rows, use_container_width=True)
-else: st.info("Truy vấn không có dữ liệu.")
+if query_rows: st.dataframe(query_rows, width="stretch")
+else: st.info("Truy vấn tìm thấy dữ liệu.")
 
