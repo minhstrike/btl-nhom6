@@ -19,10 +19,10 @@ finally:
     cursor.close()
 
 
-st.title(selected_table)
+st.header(selected_table)
 if table_rows: st.dataframe(table_rows, width="stretch")
 else: st.info("Bảng không có dữ liệu.")
 
-st.title(selected_query)
+st.header(selected_query)
 if query_rows: st.dataframe(query_rows, width="stretch")
-else: st.info("Truy vấn tìm thấy dữ liệu.")
+else: st.info("Truy vấn không tìm thấy dữ liệu.")
