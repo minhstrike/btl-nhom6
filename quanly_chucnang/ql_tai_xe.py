@@ -12,7 +12,7 @@ def quan_ly_tai_xe():
     danh_sach_tx = cursor.fetchall()
     
     # Tạo danh sách chuỗi hiển thị cho Dropdown Sửa/Xóa (VD: "001090123456 - Nguyễn Văn An")
-    danh_sach_hien_thi = [f"{tx['cmt']} - {tx['ten']}" for tx in danh_sach_tx]
+    danh_sach_tai_xe = [f"{tx['cmt']} - {tx['ten']}" for tx in danh_sach_tx]
     
     tab_them, tab_sua, tab_xoa = st.tabs(["Thêm Mới", "Cập Nhật", "Xóa"])
     
@@ -33,28 +33,30 @@ def quan_ly_tai_xe():
             
             if submitted_them:
                 if cmt.strip() == "" or ten.strip() == "" or ma_bang.strip() == "":
-                    st.error("⚠️ Vui lòng điền đầy đủ các trường có dấu (*).")
+                    st.error("Vui lòng điền đầy đủ các trường có dấu (*).")
                 else:
                     try:
                         sql = "INSERT INTO TAI_XE (cmt, ten, ma_so_bang_lai, loai_bang_lai, dia_chi, ngay_sinh, tham_nien) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                         cursor.execute(sql, (cmt, ten, ma_bang, loai_bang, dia_chi, ngay_sinh, tham_nien))
                         connection.commit()
-                        st.success("✅ Đã thêm tài xế thành công!")
+                        st.success("Đã thêm tài xế thành công!")
                         time.sleep(1.5)
                         st.rerun()
                     except Exception as e:
                         st.error(f"Lỗi: {e}")
 
     with tab_sua:
-        if not danh_sach_hien_thi:
-            st.info("Chưa có dữ liệu.")
+        if not danh_sach_tai_xe:
+            st.info("Chưa có dữ liệu tài xế để sửa.")
         else:
-            tx_chon = st.selectbox("Chọn tài xế cần cập nhật:", danh_sach_hien_thi)
+            tx_chon = st.selectbox("Chọn tài xế cần cập nhật:", danh_sach_tai_xe)
             cmt_cu = tx_chon.split(" - ")[0] 
             
             tt_cu = next(tx for tx in danh_sach_tx if tx['cmt'] == cmt_cu)
             
             with st.form("form_sua_tx"):
+                st.write(f"Đang sửa thông tin cho tài xế **{tx_chon}**")
+
                 col1, col2 = st.columns(2)
                 with col1:
                     ten_moi = st.text_input("Họ và tên *", value=tt_cu['ten'])
@@ -75,30 +77,32 @@ def quan_ly_tai_xe():
                 submitted_sua = st.form_submit_button("Cập Nhật")
                 if submitted_sua:
                     if ten_moi.strip() == "" or ma_bang_moi.strip() == "":
-                        st.error("⚠️ Tên và Mã bằng lái không được để trống.")
+                        st.error("Hãy điền đầy đủ thông tin vào các trường có dấu (*).")
                     else:
                         try:
                             sql = "UPDATE TAI_XE SET ten=%s, ma_so_bang_lai=%s, loai_bang_lai=%s, dia_chi=%s, ngay_sinh=%s, tham_nien=%s WHERE cmt=%s"
                             cursor.execute(sql, (ten_moi, ma_bang_moi, loai_bang_moi, dia_chi_moi, ngay_sinh_moi, tham_nien_moi, cmt_cu))
                             connection.commit()
-                            st.success("✅ Cập nhật thành công!")
+                            st.success(f"Đã cập nhật tài xế {tx_chon} thành công!")
                             time.sleep(1.5)
                             st.rerun()
                         except Exception as e:
                             st.error(f"Lỗi: {e}")
 
     with tab_xoa:
-        if danh_sach_hien_thi:
-            tx_xoa = st.selectbox("Chọn tài xế cần XÓA:", danh_sach_hien_thi)
+        if not danh_sach_tai_xe:
+            st.info("Chưa có dữ liệu tài xế để xóa.")
+        else:
+            tx_xoa = st.selectbox("Chọn tài xế cần XÓA:", danh_sach_tai_xe)
             cmt_xoa = tx_xoa.split(" - ")[0]
             
-            st.warning("⚠️ Không thể khôi phục sau khi xóa.")
-            if st.button("🚨 Xác nhận Xóa", type="primary"):
+            st.warning(f"Hành động xóa tài xế {tx_xoa} sẽ không thể hoàn tác được. Tài xế đang trong chuyến xe sẽ không thể bị xóa.")
+            if st.button("Xác nhận Xóa", type="primary"):
                 try:
                     cursor.execute("DELETE FROM TAI_XE WHERE cmt = %s", (cmt_xoa,))
                     connection.commit()
-                    st.success("✅ Đã xóa tài xế!")
+                    st.success(f"Đã xóa tài xế {tx_xoa} khỏi hệ thống!")
                     time.sleep(1.5)
                     st.rerun()
                 except Exception:
-                    st.error("❌ Không thể xóa vì tài xế này đang có lịch chạy trong CHUYEN_XE!")
+                    st.error("Không thể xóa tài xế này vì họ đã được phân công chuyến Xx. Hãy xóa các chuyến xe của tài xế này trước!")

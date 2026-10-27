@@ -14,11 +14,10 @@ def quan_ly_xe_khach():
     tab_them, tab_sua, tab_xoa = st.tabs(["Thêm Mới", "Cập Nhật", "Xóa"])
     
     with tab_them:
-        st.subheader("Thêm Xe Khách Mới")
         with st.form("form_them_xe", clear_on_submit=True):
             col1, col2 = st.columns(2)
             with col1:
-                bien_so = st.text_input("Biển số *")
+                bien_so = st.text_input("Biển số (VD: 12A-345-67) *")
                 mau_xe = st.text_input("Màu xe *")
                 hang_sx = st.text_input("Hãng sản xuất *")
                 doi_xe = st.number_input("Đời xe (Năm) *", min_value=2000, max_value=2030, value=2026)
@@ -31,7 +30,7 @@ def quan_ly_xe_khach():
             
             if submitted_them:
                 if bien_so.strip() == "" or mau_xe.strip() == "" or hang_sx.strip() == "" or model.strip() == "":
-                    st.error("⚠️ Vui lòng điền đầy đủ thông tin vào các trường có dấu (*).")
+                    st.error("Hãy điền đầy đủ thông tin vào các trường có dấu (*).")
                 else:
                     try:
                         sql_insert = """
@@ -47,7 +46,6 @@ def quan_ly_xe_khach():
                         st.error(f"Lỗi: {e}")
 
     with tab_sua:
-        st.subheader("Cập Nhật Thông Tin Xe")
         if not danh_sach_bien_so:
             st.info("Chưa có dữ liệu xe để sửa.")
         else:
@@ -55,7 +53,7 @@ def quan_ly_xe_khach():
             thong_tin_cu = next(xe for xe in danh_sach_xe if xe['bien_so'] == xe_can_sua)
 
             with st.form("form_sua_xe"):
-                st.write(f"Đang sửa thông tin cho xe: **{xe_can_sua}**")
+                st.write(f"Đang sửa thông tin cho xe **{xe_can_sua}**")
                 
                 col1, col2 = st.columns(2)
                 with col1:
@@ -84,12 +82,11 @@ def quan_ly_xe_khach():
                         st.error(f"Lỗi: {e}")
 
     with tab_xoa:
-        st.subheader("Xóa Xe Khách")
         if not danh_sach_bien_so:
             st.info("Chưa có dữ liệu xe để xóa.")
         else:
             xe_can_xoa = st.selectbox("Chọn biển số xe cần XÓA:", danh_sach_bien_so)
-            st.warning(f"Bạn có chắc chắn muốn xóa xe {xe_can_xoa} không? Hành động này không thể hoàn tác.")
+            st.warning(f"Hành động xóa xe {xe_can_xoa} sẽ không thể hoàn tác được. Xe đang trong chuyến xe sẽ không thể bị xóa.")
             
             if st.button("Xác nhận Xóa", type="primary"):
                 try:
@@ -99,4 +96,4 @@ def quan_ly_xe_khach():
                     time.sleep(1.5)
                     st.rerun()
                 except Exception as e:
-                    st.error("Không thể xóa chiếc xe này vì nó đã được phân công vào các Chuyến Xe (Dính khóa ngoại). Vui lòng xóa các chuyến xe của xe này trước!")
+                    st.error("Không thể xóa chiếc xe này vì nó đã được phân công vào chuyến Xe. Hãy xóa các chuyến xe của xe này trước!")
