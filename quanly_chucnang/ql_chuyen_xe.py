@@ -23,7 +23,7 @@ def quan_ly_chuyen_xe():
     ds_tx_raw = cursor.fetchall()
     ds_tx = [f"{tx['cmt']} - {tx['ten']} (Bằng {tx['loai_bang_lai']})" for tx in ds_tx_raw]
     
-    ds_hien_thi_cx = [f"{cx['ma_so_chuyen_xe']} - Tuyến {cx['ma_tuyen']}, Xe {cx['bien_so']}, Ngày {cx['ngay_khoi_hanh']}" for cx in danh_sach_cx]
+    ds_hien_thi_cx = [f"{cx['ma_so_chuyen_xe']} - Tuyến {cx['ma_tuyen']}, Xe {cx['bien_so']}, Ngày {cx['ngay_khoi_hanh'].strftime('%d/%m/%Y')}" for cx in danh_sach_cx]
     
     if not ds_tuyen or not ds_xe or not ds_tx:
         st.error("Hệ thống đang thiếu dữ liệu Tuyến Xe, Xe Khách hoặc Tài Xế. Vui lòng thêm dữ liệu cho các mục này trước!")
