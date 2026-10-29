@@ -4,25 +4,33 @@ from db import init_connection
 
 connection = init_connection()
 
-col_table, col_query = st.columns(2)
-with col_table: selected_table = st.selectbox("Chọn bảng cần xem", list(table))
-with col_query: selected_query = st.selectbox("Chọn truy vấn cần xem", list(query))
+tab_bang, tab_truyvan = st.tabs(["Bảng dữ liệu", "Bảng truy vấn"])
 
-cursor = connection.cursor(dictionary=True)
-try:
-    cursor.execute(table[selected_table])
-    table_rows = cursor.fetchall()
+with tab_bang:
+    selected_table = st.selectbox("Chọn bảng cần xem", list(table))
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute(table[selected_table])
+        table_rows = cursor.fetchall()
+    finally:
+        cursor.close()
 
-    cursor.execute(query[selected_query])
-    query_rows = cursor.fetchall()
-finally:
-    cursor.close()
+    st.header(selected_table)
+    if table_rows: st.dataframe(table_rows, width="stretch")
+    else: st.info("Bảng không có dữ liệu.")
 
+with tab_truyvan:
+    selected_query = st.selectbox("Chọn truy vấn cần xem", list(query))
+    cursor = connection.cursor(dictionary=True)
+    try:
+        cursor.execute(table[selected_table])
+        table_rows = cursor.fetchall()
 
-st.header(selected_table)
-if table_rows: st.dataframe(table_rows, width="stretch")
-else: st.info("Bảng không có dữ liệu.")
-
-st.header(selected_query)
-if query_rows: st.dataframe(query_rows, width="stretch")
-else: st.info("Truy vấn không tìm thấy dữ liệu.")
+        cursor.execute(query[selected_query])
+        query_rows = cursor.fetchall()
+    finally:
+        cursor.close()
+        
+    st.header(selected_query)
+    if query_rows: st.dataframe(query_rows, width="stretch")
+    else: st.info("Truy vấn không tìm thấy dữ liệu.")

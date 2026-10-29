@@ -26,4 +26,35 @@ query = {
                 AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
             GROUP BY x.bien_so;
         """,
+    "Xem lương của của từng tài xế": """
+        SELECT 
+            t.cmt AS 'CMT',
+            t.ten AS 'TenNhanVien',
+            ROUND(COALESCE(SUM(luong.tien_luong), 0), 0) AS 'TongLuongThang'
+        FROM TAI_XE t
+        LEFT JOIN (
+            -- Lương khi làm Lái xe (300.000 * hệ số lương)
+            SELECT 
+                c.cmt_lai_xe  AS cmt,
+                300000 * hs.he_so_luong AS tien_luong
+            FROM CHUYEN_XE c
+            JOIN TUYEN_XE tu ON c.ma_tuyen = tu.ma_tuyen
+            JOIN HE_SO_DO_PHUC_TAP hs ON tu.do_phuc_tap = hs.do_phuc_tap
+            WHERE MONTH(c.ngay_khoi_hanh) = MONTH(CURRENT_DATE()) 
+            AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
+            
+            UNION ALL
+            
+            -- Lương khi làm Phụ xe (Bằng 50% lương lái xe)
+            SELECT 
+                c.cmt_phu_xe AS cmt,
+                (300000 * hs.he_so_luong) / 2 AS tien_luong
+            FROM CHUYEN_XE c
+            JOIN TUYEN_XE tu ON c.ma_tuyen = tu.ma_tuyen
+            JOIN HE_SO_DO_PHUC_TAP hs ON tu.do_phuc_tap = hs.do_phuc_tap
+            WHERE MONTH(c.ngay_khoi_hanh) = MONTH(CURRENT_DATE()) 
+            AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
+        ) luong ON t.cmt = luong.cmt
+        GROUP BY t.cmt, t.ten;
+    """
 }

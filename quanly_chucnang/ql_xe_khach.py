@@ -24,7 +24,7 @@ def quan_ly_xe_khach():
             with col2:
                 model = st.text_input("Model *")
                 so_ghe = st.number_input("Số ghế *", min_value=10, value=40)
-                ngay_bd = st.date_input("Ngày bảo dưỡng cuối *")
+                ngay_bd = st.date_input("Ngày bảo dưỡng cuối *", format="DD/MM/YYYY")
             
             submitted_them = st.form_submit_button("Lưu Dữ Liệu")
             
@@ -63,7 +63,7 @@ def quan_ly_xe_khach():
                 with col2:
                     model_moi = st.text_input("Model", value=thong_tin_cu['model'])
                     so_ghe_moi = st.number_input("Số ghế", min_value=10, value=thong_tin_cu['so_ghe'])
-                    ngay_bd_moi = st.date_input("Ngày bảo dưỡng cuối", value=thong_tin_cu['ngay_bao_duong_cuoi'])
+                    ngay_bd_moi = st.date_input("Ngày bảo dưỡng cuối", value=thong_tin_cu['ngay_bao_duong_cuoi'], format="DD/MM/YYYY")
                 
                 submitted_sua = st.form_submit_button("Cập Nhật")
                 if submitted_sua:
