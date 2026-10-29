@@ -18,10 +18,12 @@ def quan_ly_chuyen_xe():
     cursor.execute("SELECT bien_so, so_ghe FROM XE_KHACH")
     ds_xe_raw = cursor.fetchall()
     ds_xe = [f"{x['bien_so']} ({x['so_ghe']} chỗ)" for x in ds_xe_raw]
+    dict_so_ghe = {x['bien_so']: x['so_ghe'] for x in ds_xe_raw}
     
     cursor.execute("SELECT cmt, ten, loai_bang_lai FROM TAI_XE")
     ds_tx_raw = cursor.fetchall()
     ds_tx = [f"{tx['cmt']} - {tx['ten']} (Bằng {tx['loai_bang_lai']})" for tx in ds_tx_raw]
+    dict_bang_lai = {tx['cmt']: tx['loai_bang_lai'] for tx in ds_tx_raw}
     
     ds_hien_thi_cx = [f"{cx['ma_so_chuyen_xe']} - Tuyến {cx['ma_tuyen']}, Xe {cx['bien_so']}, Ngày {cx['ngay_khoi_hanh'].strftime('%d/%m/%Y')}" for cx in danh_sach_cx]
     
@@ -52,11 +54,19 @@ def quan_ly_chuyen_xe():
                 bien_so_val = xe_chon.split(" (")[0]
                 lai_xe_val = lai_xe_chon.split(" - ")[0]
                 phu_xe_val = phu_xe_chon.split(" - ")[0]
+                so_ghe_xe = dict_so_ghe.get(bien_so_val, 0)
+                loai_bang = dict_bang_lai.get(lai_xe_val, '')
                 
                 if ma_chuyen.strip() == "":
                     st.error("Vui lòng nhập Mã chuyến xe.")
                 elif lai_xe_val == phu_xe_val:
                     st.error("Lỗi: Lái xe và Phụ xe không được là cùng một người!")
+                elif so_khach > so_ghe_xe - 2:
+                    st.error(f"Lỗi: Số khách ({so_khach}) vượt quá số ghế khách của xe ({so_ghe_xe - 2} chỗ)!")
+                elif loai_bang == 'D1' and so_ghe_xe > 17:
+                    st.error(f"Lỗi RB10: Tài xế bằng D1 chỉ được lái xe ≤ 17 chỗ (Xe hiện tại có {so_ghe_xe} chỗ)!")
+                elif loai_bang == 'D2' and so_ghe_xe > 30:
+                    st.error(f"Lỗi RB10: Tài xế bằng D2 chỉ được lái xe ≤ 30 chỗ (Xe hiện tại có {so_ghe_xe} chỗ)!")
                 else:
                     try:
                         sql = "INSERT INTO CHUYEN_XE (ma_so_chuyen_xe, ma_tuyen, bien_so, cmt_lai_xe, cmt_phu_xe, so_khach, gia_ve, ngay_khoi_hanh) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
@@ -102,9 +112,17 @@ def quan_ly_chuyen_xe():
                     bien_so_val = xe_moi.split(" (")[0]
                     lai_xe_val = lai_xe_moi.split(" - ")[0]
                     phu_xe_val = phu_xe_moi.split(" - ")[0]
+                    so_ghe_xe = dict_so_ghe.get(bien_so_val, 0)
+                    loai_bang = dict_bang_lai.get(lai_xe_val, '')
                     
                     if lai_xe_val == phu_xe_val:
                         st.error("Lỗi: Lái xe và Phụ xe không được là cùng một người!")
+                    elif so_khach_moi > so_ghe_xe - 2:
+                        st.error(f"Lỗi: Số khách ({so_khach_moi}) vượt quá số ghế khách của xe ({so_ghe_xe - 2} chỗ)!")
+                    elif loai_bang == 'D1' and so_ghe_xe > 17:
+                        st.error(f"Lỗi RB10: Tài xế bằng D1 chỉ được lái xe ≤ 17 chỗ (Xe hiện tại có {so_ghe_xe} chỗ)!")
+                    elif loai_bang == 'D2' and so_ghe_xe > 30:
+                        st.error(f"Lỗi RB10: Tài xế bằng D2 chỉ được lái xe ≤ 30 chỗ (Xe hiện tại có {so_ghe_xe} chỗ)!")
                     else:
                         try:
                             sql = "UPDATE CHUYEN_XE SET ma_tuyen=%s, bien_so=%s, cmt_lai_xe=%s, cmt_phu_xe=%s, so_khach=%s, gia_ve=%s, ngay_khoi_hanh=%s WHERE ma_so_chuyen_xe=%s"
