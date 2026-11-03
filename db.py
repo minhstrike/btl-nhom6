@@ -1,7 +1,7 @@
 import streamlit as st
 import mysql.connector
 
-@st.cache_resource(ttl=600)
+@st.cache_resource(ttl=60)
 def _create_connection():
     return mysql.connector.connect(
         host=st.secrets["mysql"]["host"],
@@ -14,7 +14,7 @@ def init_connection():
     conn = _create_connection()
     try:
         conn.ping(reconnect=True, attempts=3, delay=1)
-    except mysql.connector.Error:
+    except Exception:
         st.cache_resource.clear()
         conn = _create_connection()
     return conn
