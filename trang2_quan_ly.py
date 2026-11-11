@@ -7,8 +7,15 @@ from quanly_chucnang.ql_chuyen_xe import quan_ly_chuyen_xe
 from quanly_chucnang.ql_he_so_duong import quan_ly_he_so_duong
 
 
-st.title("Quản lý dữ liệu Nhà xe N16")
 
+col_title, col_btn = st.columns([0.9, 0.1], vertical_alignment="bottom")
+with col_title:
+    st.title("Quản lý dữ liệu Nhà Xe N16")
+
+with col_btn:
+    if st.button("", icon=":material/refresh:",type="tertiary", width="stretch"):
+        st.rerun()
+        
 bang_duoc_chon = st.selectbox(
     "Chọn danh mục cần quản lý:",
     ["Quản lý Xe Khách", "Quản lý Tài Xế", "Quản lý Tuyến Xe", "Quản lý Hệ số đường", "Quản lý Chuyến Xe"]

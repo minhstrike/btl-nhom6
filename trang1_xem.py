@@ -9,7 +9,14 @@ date_config = {
     "ngay_sinh": st.column_config.DateColumn(format="DD/MM/YYYY"),
     "ngay_khoi_hanh": st.column_config.DateColumn(format="DD/MM/YYYY"),
 }
-st.title("Dữ liệu Nhà Xe N16")
+col_title, col_btn = st.columns([0.9, 0.1], vertical_alignment="bottom")
+with col_title:
+    st.title("Dữ liệu Nhà Xe N16")
+
+with col_btn:
+    if st.button("", icon=":material/refresh:",type="tertiary", width="stretch"):
+        st.rerun()
+
 tab_bang, tab_truyvan = st.tabs(["Bảng dữ liệu", "Truy vấn và báo cáo"])
 
 with tab_bang:
@@ -51,19 +58,19 @@ with tab_truyvan:
             ])
             
             with subtab_tatca:
-                st.dataframe(df_query, column_config=date_config, use_container_width=True)
+                st.dataframe(df_query, column_config=date_config, width="stretch")
                 
             with subtab_quahan:
                 df_quahan = df_query[df_query['TrangThaiBaoDuong'] == 'Quá hạn']
-                st.dataframe(df_quahan, column_config=date_config, use_container_width=True)
+                st.dataframe(df_quahan, column_config=date_config, width="stretch")
                     
             with subtab_denhan:
                 df_denhan = df_query[df_query['TrangThaiBaoDuong'] == 'Đến hạn']
-                st.dataframe(df_denhan, column_config=date_config, use_container_width=True)
+                st.dataframe(df_denhan, column_config=date_config, width="stretch")
         
             with subtab_chuaden:
                 df_chuaden = df_query[df_query['TrangThaiBaoDuong'] == 'Chưa đến hạn']
-                st.dataframe(df_chuaden, column_config=date_config, use_container_width=True)     
+                st.dataframe(df_chuaden, column_config=date_config, width="stretch")     
         else:
-            st.dataframe(df_query, column_config=date_config, use_container_width=True)
+            st.dataframe(df_query, column_config=date_config, width="stretch")
     else: st.info("Truy vấn không tìm thấy dữ liệu.")
