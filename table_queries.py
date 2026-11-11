@@ -60,26 +60,33 @@ query = {
     "Xem trạng thái bảo dưỡng của xe" : """
         SELECT 
             BienSo,
+            NgayBaoDuongCuoi,
+            SoNgayLich,
+            SoKmQuyDoi,
+            SoNgayLamViec,
             NgayBaoDuongTiepTheo,
-            -- Dùng CASE WHEN để phân loại trạng thái so với ngày hôm nay
             CASE
-                WHEN NgayBaoDuongTiepTheo < CURRENT_DATE() THEN 'Quá hạn'
-                WHEN NgayBaoDuongTiepTheo = CURRENT_DATE() THEN 'Đến hạn'
+                WHEN SoNgayLamViec > 360 THEN 'Quá hạn'
+                WHEN SoNgayLamViec = 360 THEN 'Đến hạn'
                 ELSE 'Chưa đến hạn'
             END AS TrangThaiBaoDuong
         FROM (
-            -- Đặt toàn bộ truy vấn gốc của bạn vào trong ngoặc để làm bảng tạm
             SELECT 
                 xk.bien_so AS BienSo,
+                xk.ngay_bao_duong_cuoi AS NgayBaoDuongCuoi,
+                ROUND(COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0), 2) AS SoKmQuyDoi,
+                DATEDIFF(CURRENT_DATE(), xk.ngay_bao_duong_cuoi) AS SoNgayLich,
+                DATEDIFF(CURRENT_DATE(), xk.ngay_bao_duong_cuoi) + ROUND(COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0) AS SoNgayLamViec,
                 DATE_ADD(
                     xk.ngay_bao_duong_cuoi,
                     INTERVAL ROUND(360 - (COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0)) DAY
                 ) AS NgayBaoDuongTiepTheo
+
             FROM XE_KHACH xk
             LEFT JOIN CHUYEN_XE cx ON xk.bien_so = cx.bien_so AND cx.ngay_khoi_hanh >= xk.ngay_bao_duong_cuoi
             LEFT JOIN TUYEN_XE tx ON cx.ma_tuyen = tx.ma_tuyen
             LEFT JOIN HE_SO_DO_PHUC_TAP hs ON tx.do_phuc_tap = hs.do_phuc_tap
             GROUP BY xk.bien_so, xk.ngay_bao_duong_cuoi
-        ) AS BangTinhToan; 
+        ) AS BangTinhToan;
     """
 }

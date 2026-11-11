@@ -107,4 +107,4 @@ def quan_ly_tuyen_xe():
                     time.sleep(1.5)
                     st.rerun()
                 except Exception:
-                    st.error("Không thể xóa tuyến xe này vì đã được phân công chuyến xe. Hãy xóa các chuyến xe của tuyến này trước!")
+                    st.error("Không thể xóa tuyến xe này vì tuyến đã được phân công chuyến. Hãy xóa các chuyến xe của tuyến này trước!")

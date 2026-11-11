@@ -9,11 +9,11 @@ date_config = {
     "ngay_sinh": st.column_config.DateColumn(format="DD/MM/YYYY"),
     "ngay_khoi_hanh": st.column_config.DateColumn(format="DD/MM/YYYY"),
 }
-st.title("Quản Lý Dữ Liệu Nhà Xe N16")
+st.title("Dữ liệu Nhà Xe N16")
 tab_bang, tab_truyvan = st.tabs(["Bảng dữ liệu", "Truy vấn và báo cáo"])
 
 with tab_bang:
-    selected_table = st.selectbox("Chọn bảng cần xem", list(table), key="select_table")
+    selected_table = st.selectbox("Chọn dữ liệu cần xem", list(table), key="select_table")
     cursor = connection.cursor(dictionary=True)
     try:
         cursor.execute(table[selected_table])
@@ -42,5 +42,28 @@ with tab_truyvan:
     st.header(selected_query)
     if query_rows: 
         df_query = pd.DataFrame(query_rows)
-        st.dataframe(df_query, column_config=date_config, width="stretch")
+        if selected_query == "Xem trạng thái bảo dưỡng của xe":
+            subtab_tatca, subtab_chuaden, subtab_denhan, subtab_quahan = st.tabs([
+                "Tất cả", 
+                "Chưa đến hạn", 
+                "Đến hạn", 
+                "Chưa đến hạn"
+            ])
+            
+            with subtab_tatca:
+                st.dataframe(df_query, column_config=date_config, use_container_width=True)
+                
+            with subtab_quahan:
+                df_quahan = df_query[df_query['TrangThaiBaoDuong'] == 'Quá hạn']
+                st.dataframe(df_quahan, column_config=date_config, use_container_width=True)
+                    
+            with subtab_denhan:
+                df_denhan = df_query[df_query['TrangThaiBaoDuong'] == 'Đến hạn']
+                st.dataframe(df_denhan, column_config=date_config, use_container_width=True)
+        
+            with subtab_chuaden:
+                df_chuaden = df_query[df_query['TrangThaiBaoDuong'] == 'Chưa đến hạn']
+                st.dataframe(df_chuaden, column_config=date_config, use_container_width=True)     
+        else:
+            st.dataframe(df_query, column_config=date_config, use_container_width=True)
     else: st.info("Truy vấn không tìm thấy dữ liệu.")

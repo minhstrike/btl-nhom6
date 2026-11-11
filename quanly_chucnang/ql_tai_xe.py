@@ -105,4 +105,4 @@ def quan_ly_tai_xe():
                     time.sleep(1.5)
                     st.rerun()
                 except Exception:
-                    st.error("Không thể xóa tài xế này vì họ đã được phân công chuyến Xx. Hãy xóa các chuyến xe của tài xế này trước!")
+                    st.error("Không thể xóa tài xế này vì họ đã được phân công chuyến. Hãy xóa các chuyến xe của tài xế này trước!")

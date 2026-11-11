@@ -7,10 +7,10 @@ from quanly_chucnang.ql_chuyen_xe import quan_ly_chuyen_xe
 from quanly_chucnang.ql_he_so_duong import quan_ly_he_so_duong
 
 
-st.title("Quản Lý Dữ Liệu Hệ Thống")
+st.title("Quản lý dữ liệu Nhà xe N16")
 
 bang_duoc_chon = st.selectbox(
-    "Vui lòng chọn danh mục bạn muốn quản lý:",
+    "Chọn danh mục cần quản lý:",
     ["Quản lý Xe Khách", "Quản lý Tài Xế", "Quản lý Tuyến Xe", "Quản lý Hệ số đường", "Quản lý Chuyến Xe"]
 )
 
