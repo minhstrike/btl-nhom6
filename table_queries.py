@@ -56,5 +56,30 @@ query = {
             AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
         ) luong ON t.cmt = luong.cmt
         GROUP BY t.cmt, t.ten;
+    """,
+    "Xem trạng thái bảo dưỡng của xe" : """
+        SELECT 
+            BienSo,
+            NgayBaoDuongTiepTheo,
+            -- Dùng CASE WHEN để phân loại trạng thái so với ngày hôm nay
+            CASE
+                WHEN NgayBaoDuongTiepTheo < CURRENT_DATE() THEN 'Quá hạn'
+                WHEN NgayBaoDuongTiepTheo = CURRENT_DATE() THEN 'Đến hạn'
+                ELSE 'Chưa đến hạn'
+            END AS TrangThaiBaoDuong
+        FROM (
+            -- Đặt toàn bộ truy vấn gốc của bạn vào trong ngoặc để làm bảng tạm
+            SELECT 
+                xk.bien_so AS BienSo,
+                DATE_ADD(
+                    xk.ngay_bao_duong_cuoi,
+                    INTERVAL ROUND(360 - (COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0)) DAY
+                ) AS NgayBaoDuongTiepTheo
+            FROM XE_KHACH xk
+            LEFT JOIN CHUYEN_XE cx ON xk.bien_so = cx.bien_so AND cx.ngay_khoi_hanh >= xk.ngay_bao_duong_cuoi
+            LEFT JOIN TUYEN_XE tx ON cx.ma_tuyen = tx.ma_tuyen
+            LEFT JOIN HE_SO_DO_PHUC_TAP hs ON tx.do_phuc_tap = hs.do_phuc_tap
+            GROUP BY xk.bien_so, xk.ngay_bao_duong_cuoi
+        ) AS BangTinhToan; 
     """
 }
