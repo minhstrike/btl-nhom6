@@ -4,7 +4,7 @@ table = {
     "Xem danh sách các tuyến xe": "SELECT * FROM TUYEN_XE",
     "Xem danh sách các chuyến xe": """
         SELECT 
-            cx.ma_so_chuyen_xe, cx.ma_tuyen, cx.bien_so,
+            cx.ma_chuyen, cx.ma_tuyen, cx.bien_so,
             tx_lai.ten AS ten_lai_xe, tx_phu.ten AS ten_phu_xe,
             cx.so_khach, cx.gia_ve, cx.ngay_khoi_hanh
         FROM CHUYEN_XE cx

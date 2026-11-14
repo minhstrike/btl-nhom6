@@ -25,14 +25,14 @@ def quan_ly_chuyen_xe():
     ds_tx = [f"{tx['cmt']} - {tx['ten']} (Bằng {tx['loai_bang_lai']})" for tx in ds_tx_raw]
     dict_bang_lai = {tx['cmt']: tx['loai_bang_lai'] for tx in ds_tx_raw}
     
-    ds_hien_thi_cx = [f"{cx['ma_so_chuyen_xe']} - Tuyến {cx['ma_tuyen']}, Xe {cx['bien_so']}, Ngày {cx['ngay_khoi_hanh'].strftime('%d/%m/%Y')}" for cx in danh_sach_cx]
+    ds_hien_thi_cx = [f"{cx['ma_chuyen']} - Tuyến {cx['ma_tuyen']}, Xe {cx['bien_so']}, Ngày {cx['ngay_khoi_hanh'].strftime('%d/%m/%Y')}" for cx in danh_sach_cx]
     
     if not ds_tuyen or not ds_xe or not ds_tx:
         st.error("Hệ thống đang thiếu dữ liệu Tuyến Xe, Xe Khách hoặc Tài Xế. Vui lòng thêm dữ liệu cho các mục này trước!")
         return
 
     if danh_sach_cx:
-            max_num = max(int(cx['ma_so_chuyen_xe'][3:]) for cx in danh_sach_cx)
+            max_num = max(int(cx['ma_chuyen'][3:]) for cx in danh_sach_cx)
             ma_chuyen_moi = f"CHY{max_num + 1:04d}"
     else:
         ma_chuyen_moi = "CHY1001"
@@ -75,7 +75,7 @@ def quan_ly_chuyen_xe():
                     st.error(f"Lỗi RB10: Tài xế bằng D2 chỉ được lái xe ≤ 30 chỗ (Xe hiện tại có {so_ghe_xe} chỗ)!")
                 else:
                     try:
-                        sql = "INSERT INTO CHUYEN_XE (ma_so_chuyen_xe, ma_tuyen, bien_so, cmt_lai_xe, cmt_phu_xe, so_khach, gia_ve, ngay_khoi_hanh) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                        sql = "INSERT INTO CHUYEN_XE (ma_chuyen, ma_tuyen, bien_so, cmt_lai_xe, cmt_phu_xe, so_khach, gia_ve, ngay_khoi_hanh) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
                         cursor.execute(sql, (ma_chuyen, ma_tuyen_val, bien_so_val, lai_xe_val, phu_xe_val, so_khach, gia_ve, ngay_kh))
                         connection.commit()
                         st.success("Đã thêm chuyến xe thành công!")
@@ -91,7 +91,7 @@ def quan_ly_chuyen_xe():
             cx_chon = st.selectbox("Chọn chuyến xe cần cập nhật:", ds_hien_thi_cx)
             ma_cx_cu = cx_chon.split(" - ")[0] 
             
-            tt_cu = next(cx for cx in danh_sach_cx if cx['ma_so_chuyen_xe'] == ma_cx_cu)
+            tt_cu = next(cx for cx in danh_sach_cx if cx['ma_chuyen'] == ma_cx_cu)
             
             idx_tuyen = next((i for i, v in enumerate(ds_tuyen) if v.startswith(tt_cu['ma_tuyen'])), 0)
             idx_xe = next((i for i, v in enumerate(ds_xe) if v.startswith(tt_cu['bien_so'])), 0)
@@ -131,7 +131,7 @@ def quan_ly_chuyen_xe():
                         st.error(f"Lỗi RB10: Tài xế bằng D2 chỉ được lái xe ≤ 30 chỗ (Xe hiện tại có {so_ghe_xe} chỗ)!")
                     else:
                         try:
-                            sql = "UPDATE CHUYEN_XE SET ma_tuyen=%s, bien_so=%s, cmt_lai_xe=%s, cmt_phu_xe=%s, so_khach=%s, gia_ve=%s, ngay_khoi_hanh=%s WHERE ma_so_chuyen_xe=%s"
+                            sql = "UPDATE CHUYEN_XE SET ma_tuyen=%s, bien_so=%s, cmt_lai_xe=%s, cmt_phu_xe=%s, so_khach=%s, gia_ve=%s, ngay_khoi_hanh=%s WHERE ma_chuyen=%s"
                             cursor.execute(sql, (ma_tuyen_val, bien_so_val, lai_xe_val, phu_xe_val, so_khach_moi, gia_ve_moi, ngay_kh_moi, ma_cx_cu))
                             connection.commit()
                             st.success(f"Đã cập nhật chuyến xe {ma_cx_cu} thành công!")
@@ -150,7 +150,7 @@ def quan_ly_chuyen_xe():
             st.warning(f"Hành động xóa chuyến xe {cx_xoa} sẽ không thể hoàn tác được.")
             if st.button("Xác nhận Xóa", type="primary"):
                 try:
-                    cursor.execute("DELETE FROM CHUYEN_XE WHERE ma_so_chuyen_xe = %s", (ma_xoa,))
+                    cursor.execute("DELETE FROM CHUYEN_XE WHERE ma_chuyen = %s", (ma_xoa,))
                     connection.commit()
                     st.success(f"Đã xóa chuyến xe {cx_xoa} khỏi hệ thống!")
                     time.sleep(1.5)
