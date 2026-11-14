@@ -16,21 +16,11 @@ table = {
 }
 
 query = {
-    "Xem doanh thu của từng xe": """
-            SELECT 
-                x.bien_so AS 'BienSo',
-                COALESCE(SUM(c.so_khach * c.gia_ve), 0) AS 'TongDoanhThu'
-            FROM XE_KHACH x
-            LEFT JOIN CHUYEN_XE c ON x.bien_so = c.bien_so 
-                AND MONTH(c.ngay_khoi_hanh) = MONTH(CURRENT_DATE()) 
-                AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
-            GROUP BY x.bien_so;
-        """,
     "Xem lương của của từng tài xế": """
         SELECT 
             t.cmt AS 'CMT',
             t.ten AS 'TenNhanVien',
-            ROUND(COALESCE(SUM(luong.tien_luong), 0), 0) AS 'TongLuongThang'
+            ROUND(COALESCE(SUM(luong.tien_luong), 0), 0) AS 'TongLuong'
         FROM TAI_XE t
         LEFT JOIN (
             -- Lương khi làm Lái xe (300.000 * hệ số lương)
@@ -40,8 +30,8 @@ query = {
             FROM CHUYEN_XE c
             JOIN TUYEN_XE tu ON c.ma_tuyen = tu.ma_tuyen
             JOIN HE_SO_DO_PHUC_TAP hs ON tu.do_phuc_tap = hs.do_phuc_tap
-            WHERE MONTH(c.ngay_khoi_hanh) = MONTH(CURRENT_DATE()) 
-            AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
+            WHERE c.ngay_khoi_hanh <= CURRENT_DATE()
+
             
             UNION ALL
             
@@ -52,10 +42,18 @@ query = {
             FROM CHUYEN_XE c
             JOIN TUYEN_XE tu ON c.ma_tuyen = tu.ma_tuyen
             JOIN HE_SO_DO_PHUC_TAP hs ON tu.do_phuc_tap = hs.do_phuc_tap
-            WHERE MONTH(c.ngay_khoi_hanh) = MONTH(CURRENT_DATE()) 
-            AND YEAR(c.ngay_khoi_hanh) = YEAR(CURRENT_DATE())
+            WHERE c.ngay_khoi_hanh <= CURRENT_DATE()
         ) luong ON t.cmt = luong.cmt
         GROUP BY t.cmt, t.ten;
+    """,
+    "Xem doanh thu của từng xe trong khoảng thời gian nhất định": """
+        SELECT 
+            x.bien_so AS 'BienSo',
+            COALESCE(SUM(c.so_khach * c.gia_ve), 0) AS 'TongDoanhThu'
+        FROM XE_KHACH x
+        LEFT JOIN CHUYEN_XE c ON x.bien_so = c.bien_so 
+            AND c.ngay_khoi_hanh BETWEEN %s AND %s
+        GROUP BY x.bien_so;
     """,
     "Xem trạng thái bảo dưỡng của xe" : """
         SELECT 
