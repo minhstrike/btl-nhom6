@@ -9,6 +9,7 @@ def _create_connection():
         password=st.secrets["mysql"]["password"],
         port=st.secrets["mysql"]["port"],
         database=st.secrets["mysql"]["database"],
+        autocommit=True
     )
 def init_connection():
     conn = _create_connection()
