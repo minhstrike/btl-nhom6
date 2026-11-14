@@ -106,11 +106,12 @@ def quan_ly_chuyen_xe():
                     tuyen_moi = st.selectbox("Chọn tuyến xe *", ds_tuyen, index=idx_tuyen)
                     xe_moi = st.selectbox("Chọn xe khách *", ds_xe, index=idx_xe)
                     ngay_kh_moi = st.date_input("Ngày khởi hành *", value=tt_cu['ngay_khoi_hanh'], format="DD/MM/YYYY")
+                    gia_ve_moi = st.number_input("Giá vé (VNĐ)", min_value=0.0, value=float(tt_cu['gia_ve']), step=10000.0)
+                    
                 with col2:
                     lai_xe_moi = st.selectbox("Chọn Lái xe (Lái chính) *", ds_tx, index=idx_lai_xe)
                     phu_xe_moi = st.selectbox("Chọn Phụ xe *", ds_tx, index=idx_phu_xe)
                     so_khach_moi = st.number_input("Số lượng khách hiện tại", min_value=0, value=int(tt_cu['so_khach']))
-                    gia_ve_moi = st.number_input("Giá vé (VNĐ)", min_value=0.0, value=float(tt_cu['gia_ve']), step=10000.0)
                 
                 submitted_sua = st.form_submit_button("Cập Nhật")
                 if submitted_sua:
