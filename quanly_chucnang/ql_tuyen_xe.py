@@ -17,6 +17,12 @@ def quan_ly_tuyen_xe():
     
     # Tạo danh sách chuỗi hiển thị cho Dropdown Sửa/Xóa (VD: "TUY001 - Hà Nội đến Hải Phòng")
     danh_sach_tuyen_xe = [f"{tx['ma_tuyen']} - {tx['diem_dau']} đến {tx['diem_cuoi']}" for tx in danh_sach_tx]
+
+    if danh_sach_tx:
+        max_num = max(int(tx['ma_tuyen'][3:]) for tx in danh_sach_tx)
+        ma_tuyen_moi = f"TUY{max_num + 1:03d}"
+    else:
+        ma_tuyen_moi = "TUY001"
     
     tab_them, tab_sua, tab_xoa = st.tabs(["Thêm Mới", "Cập Nhật", "Xóa"])
     
@@ -24,7 +30,7 @@ def quan_ly_tuyen_xe():
         with st.form("form_them_tuyen", clear_on_submit=True):
             col1, col2 = st.columns(2)
             with col1:
-                ma_tuyen = st.text_input("Mã tuyến * (VD: TUY007)")
+                ma_tuyen = st.text_input("Mã tuyến (Tự động tạo)", value=ma_tuyen_moi, disabled=True)
                 diem_dau = st.text_input("Điểm đầu *")
                 diem_cuoi = st.text_input("Điểm cuối *")
             with col2:

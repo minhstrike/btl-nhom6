@@ -31,13 +31,19 @@ def quan_ly_chuyen_xe():
         st.error("Hệ thống đang thiếu dữ liệu Tuyến Xe, Xe Khách hoặc Tài Xế. Vui lòng thêm dữ liệu cho các mục này trước!")
         return
 
+    if danh_sach_cx:
+            max_num = max(int(cx['ma_so_chuyen_xe'][3:]) for cx in danh_sach_cx)
+            ma_chuyen_moi = f"CHY{max_num + 1:04d}"
+    else:
+        ma_chuyen_moi = "CHY1001"
+
     tab_them, tab_sua, tab_xoa = st.tabs(["Thêm Mới", "Cập Nhật", "Xóa"])
     
     with tab_them:
         with st.form("form_them_cx", clear_on_submit=True):
             col1, col2 = st.columns(2)
             with col1:
-                ma_chuyen = st.text_input("Mã chuyến xe * (VD: CHY1016)")
+                ma_chuyen = st.text_input("Mã chuyến (Tự động tạo)", value=ma_chuyen_moi, disabled=True)
                 tuyen_chon = st.selectbox("Chọn tuyến xe *", ds_tuyen)
                 xe_chon = st.selectbox("Chọn xe khách *", ds_xe)
                 ngay_kh = st.date_input("Ngày khởi hành *", format="DD/MM/YYYY")

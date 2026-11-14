@@ -18,7 +18,7 @@ with col_btn:
         
 bang_duoc_chon = st.selectbox(
     "Chọn danh mục cần quản lý:",
-    ["Quản lý Xe Khách", "Quản lý Tài Xế", "Quản lý Tuyến Xe", "Quản lý Hệ số đường", "Quản lý Chuyến Xe"]
+    ["Quản lý Xe Khách", "Quản lý Tài Xế", "Quản lý Tuyến Xe", "Quản lý Chuyến Xe", "Quản lý Hệ số đường"]
 )
 
 
