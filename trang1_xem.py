@@ -11,7 +11,7 @@ date_config = {
 }
 col_title, col_btn = st.columns([0.9, 0.1], vertical_alignment="bottom")
 with col_title:
-    st.title("Dữ liệu Nhà Xe N16")
+    st.title("Dữ liệu nhà Xe N16")
 
 with col_btn:
     if st.button("", icon=":material/refresh:",type="tertiary", width="stretch"):
