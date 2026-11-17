@@ -1,14 +1,12 @@
 import streamlit as st
 import time
 from db import init_connection
+import pandas as pd
 
 def quan_ly_tuyen_xe():
     connection = init_connection()
     cursor = connection.cursor(dictionary=True)
     
-    st.subheader("Quản Lý Dữ Liệu Tuyến Xe")
-    
-    # 1. Lấy dữ liệu tuyến xe và hệ số độ phức tạp
     cursor.execute("SELECT * FROM TUYEN_XE")
     danh_sach_tx = cursor.fetchall()
     
@@ -114,3 +112,8 @@ def quan_ly_tuyen_xe():
                     st.rerun()
                 except Exception:
                     st.error("Không thể xóa tuyến xe này vì tuyến đã được phân công chuyến. Hãy xóa các chuyến xe của tuyến này trước!")
+    if danh_sach_tx:
+        df_table = pd.DataFrame(danh_sach_tx)
+        st.dataframe(df_table, width="stretch")
+    else:
+        st.info("Bảng không có dữ liệu.")

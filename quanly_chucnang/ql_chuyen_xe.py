@@ -2,12 +2,17 @@ import streamlit as st
 import datetime
 import time
 from db import init_connection
+import pandas as pd
+
+date_config = {
+    "ngay_bao_duong_cuoi": st.column_config.DateColumn(format="DD/MM/YYYY"),
+    "ngay_sinh": st.column_config.DateColumn(format="DD/MM/YYYY"),
+    "ngay_khoi_hanh": st.column_config.DateColumn(format="DD/MM/YYYY"),
+}
 
 def quan_ly_chuyen_xe():
     connection = init_connection()
     cursor = connection.cursor(dictionary=True)
-    
-    st.subheader("Quản Lý Dữ Liệu Chuyến Xe")
     
     cursor.execute("SELECT * FROM CHUYEN_XE")
     danh_sach_cx = cursor.fetchall()
@@ -169,3 +174,8 @@ def quan_ly_chuyen_xe():
                     st.rerun()
                 except Exception as e:
                     st.error(f"Lỗi hệ thống khi xóa: {e}")
+    if danh_sach_cx:
+        df_table = pd.DataFrame(danh_sach_cx)
+        st.dataframe(df_table, column_config=date_config, width="stretch")
+    else:
+        st.info("Bảng không có dữ liệu.")

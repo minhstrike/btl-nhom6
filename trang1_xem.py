@@ -29,7 +29,6 @@ with tab_bang:
     finally:
         cursor.close()
 
-    st.header(selected_table)
     if table_rows: 
         df_table = pd.DataFrame(table_rows)
         st.dataframe(df_table, column_config=date_config, width="stretch")
@@ -73,7 +72,6 @@ with tab_truyvan:
         finally:
             cursor.close()
             
-        st.header(selected_query)
         if query_rows: 
             df_query = pd.DataFrame(query_rows)
             if selected_query == "Xem doanh thu của từng xe trong khoảng thời gian nhất định":

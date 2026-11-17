@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 from db import init_connection
+import pandas as pd
 
 def quan_ly_he_so_duong():
     connection = init_connection()
@@ -42,3 +43,8 @@ def quan_ly_he_so_duong():
                     st.rerun()
                 except Exception as e:
                     st.error(f"Lỗi: {e}")
+    if danh_sach_hs:
+        df_table = pd.DataFrame(danh_sach_hs)
+        st.dataframe(df_table, width="stretch")
+    else:
+        st.info("Bảng không có dữ liệu.")

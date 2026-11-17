@@ -2,12 +2,18 @@ import streamlit as st
 import datetime
 import time
 from db import init_connection
+import pandas as pd
+
+date_config = {
+    "ngay_bao_duong_cuoi": st.column_config.DateColumn(format="DD/MM/YYYY"),
+    "ngay_sinh": st.column_config.DateColumn(format="DD/MM/YYYY"),
+    "ngay_khoi_hanh": st.column_config.DateColumn(format="DD/MM/YYYY"),
+}
 
 def quan_ly_xe_khach():
     connection = init_connection()
     cursor = connection.cursor(dictionary=True)
     
-    st.subheader("Quản Lý Dữ Liệu Xe Khách")
     cursor.execute("SELECT bien_so, mau_xe, hang_san_xuat, doi_xe, model, so_ghe, ngay_bao_duong_cuoi FROM XE_KHACH")
     danh_sach_xe = cursor.fetchall()
     danh_sach_bien_so = [xe['bien_so'] for xe in danh_sach_xe]
@@ -108,3 +114,8 @@ def quan_ly_xe_khach():
                     st.rerun()
                 except Exception as e:
                     st.error("Không thể xóa xe này vì xe đã được phân công chuyến. Hãy xóa các chuyến xe của xe này trước!")
+    if danh_sach_xe:
+        df_table = pd.DataFrame(danh_sach_xe)
+        st.dataframe(df_table, column_config=date_config, width="stretch")
+    else:
+        st.info("Bảng không có dữ liệu.")
