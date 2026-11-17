@@ -46,12 +46,16 @@ with tab_truyvan:
             tu_ngay = st.date_input(
                 "Từ ngày",
                 value=datetime.date.today().replace(day=1),
+                min_value= datetime.date(1950, 1, 1),
+                max_value= datetime.date.today(),
                 format="DD/MM/YYYY"
             )
         with col2:
             den_ngay = st.date_input(
                 "Đến ngày",
                 value=datetime.date.today(),
+                min_value= datetime.date(1950, 1, 1),
+                max_value= datetime.date.today(),
                 format="DD/MM/YYYY"
             )
         if tu_ngay > den_ngay:

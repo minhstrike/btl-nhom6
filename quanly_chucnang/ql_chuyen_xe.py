@@ -1,4 +1,5 @@
 import streamlit as st
+import datetime
 import time
 from db import init_connection
 
@@ -46,7 +47,12 @@ def quan_ly_chuyen_xe():
                 ma_chuyen = st.text_input("Mã chuyến (Tự động tạo)", value=ma_chuyen_moi, disabled=True)
                 tuyen_chon = st.selectbox("Chọn tuyến xe *", ds_tuyen)
                 xe_chon = st.selectbox("Chọn xe khách *", ds_xe)
-                ngay_kh = st.date_input("Ngày khởi hành *", format="DD/MM/YYYY")
+                ngay_kh = st.date_input(
+                    "Ngày khởi hành *", 
+                    value = datetime.date.today(),
+                    min_value= datetime.date(1950, 1, 1),
+                    max_value= datetime.date.today(),
+                    format="DD/MM/YYYY")
             with col2:
                 lai_xe_chon = st.selectbox("Chọn Lái xe (Lái chính) *", ds_tx)
                 phu_xe_chon = st.selectbox("Chọn Phụ xe *", ds_tx)
@@ -105,7 +111,12 @@ def quan_ly_chuyen_xe():
                 with col1:
                     tuyen_moi = st.selectbox("Chọn tuyến xe *", ds_tuyen, index=idx_tuyen)
                     xe_moi = st.selectbox("Chọn xe khách *", ds_xe, index=idx_xe)
-                    ngay_kh_moi = st.date_input("Ngày khởi hành *", value=tt_cu['ngay_khoi_hanh'], format="DD/MM/YYYY")
+                    ngay_kh_moi = st.date_input(
+                        "Ngày khởi hành *", 
+                        value=tt_cu['ngay_khoi_hanh'], 
+                        min_value= datetime.date(1950, 1, 1),
+                        max_value= datetime.date.today(),
+                        format="DD/MM/YYYY")
                     gia_ve_moi = st.number_input("Giá vé (VNĐ)", min_value=0.0, value=float(tt_cu['gia_ve']), step=10000.0)
                     
                 with col2:

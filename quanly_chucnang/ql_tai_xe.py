@@ -1,4 +1,5 @@
 import streamlit as st
+import datetime
 import time
 from db import init_connection
 
@@ -22,7 +23,13 @@ def quan_ly_tai_xe():
             with col1:
                 cmt = st.text_input("Số CMT/CCCD *")
                 ten = st.text_input("Họ và tên *")
-                ngay_sinh = st.date_input("Ngày sinh *", format="DD/MM/YYYY")
+                ngay_sinh = st.date_input(
+                    "Ngày sinh *",
+                    value=datetime.date(1990, 1, 1),
+                    min_value=datetime.date(1950, 1, 1),
+                    max_value=datetime.date.today(),
+                    format="DD/MM/YYYY"
+                )
                 dia_chi = st.text_input("Địa chỉ")
             with col2:
                 ma_bang = st.text_input("Mã số bằng lái *")
@@ -60,7 +67,13 @@ def quan_ly_tai_xe():
                 col1, col2 = st.columns(2)
                 with col1:
                     ten_moi = st.text_input("Họ và tên *", value=tt_cu['ten'])
-                    ngay_sinh_moi = st.date_input("Ngày sinh *", value=tt_cu['ngay_sinh'], format="DD/MM/YYYY")
+                    ngay_sinh_moi = st.date_input(
+                        "Ngày sinh *",
+                        value=tt_cu['ngay_sinh'],
+                        min_value=datetime.date(1950, 1, 1),
+                        max_value=datetime.date.today(),
+                        format="DD/MM/YYYY"
+                    )
                     dia_chi_moi = st.text_input("Địa chỉ", value=tt_cu['dia_chi'])
                 with col2:
                     ma_bang_moi = st.text_input("Mã số bằng lái *", value=tt_cu['ma_so_bang_lai'])
