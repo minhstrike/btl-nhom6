@@ -59,7 +59,6 @@ query = {
         SELECT 
             BienSo,
             NgayBaoDuongCuoi,
-            SoNgayLich,
             SoKmQuyDoi,
             SoNgayLamViec,
             NgayBaoDuongTiepTheo,
@@ -73,10 +72,9 @@ query = {
                 xk.bien_so AS BienSo,
                 xk.ngay_bao_duong_cuoi AS NgayBaoDuongCuoi,
                 ROUND(COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0), 2) AS SoKmQuyDoi,
-                DATEDIFF(CURRENT_DATE(), xk.ngay_bao_duong_cuoi) AS SoNgayLich,
-                DATEDIFF(CURRENT_DATE(), xk.ngay_bao_duong_cuoi) + ROUND(COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0) AS SoNgayLamViec,
+                ROUND(COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0) AS SoNgayLamViec,
                 DATE_ADD(
-                    xk.ngay_bao_duong_cuoi,
+                    CURRENT_DATE(),
                     INTERVAL ROUND(360 - (COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0)) DAY
                 ) AS NgayBaoDuongTiepTheo
 
