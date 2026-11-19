@@ -63,8 +63,8 @@ query = {
             SoNgayLamViec,
             NgayBaoDuongTiepTheo,
             CASE
-                WHEN SoNgayLamViec > 360 THEN 'Quá hạn'
-                WHEN SoNgayLamViec = 360 THEN 'Đến hạn'
+                WHEN NgayBaoDuongTiepTheo = CURDATE() THEN 'Đến hạn'
+                WHEN NgayBaoDuongTiepTheo < CURDATE() THEN 'Quá hạn'
                 ELSE 'Chưa đến hạn'
             END AS TrangThaiBaoDuong
         FROM (
@@ -74,7 +74,7 @@ query = {
                 ROUND(COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0), 2) AS SoKmQuyDoi,
                 ROUND(COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0) AS SoNgayLamViec,
                 DATE_ADD(
-                    CURRENT_DATE(),
+                    xk.ngay_bao_duong_cuoi,
                     INTERVAL ROUND(360 - (COALESCE(SUM(tx.do_dai_km * hs.he_so_duong_kho), 0) / 100.0)) DAY
                 ) AS NgayBaoDuongTiepTheo
 
