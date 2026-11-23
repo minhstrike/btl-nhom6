@@ -1,5 +1,5 @@
 table = {
-    "Xem danh sách các xe khách": "SELECT * FROM XE_KHACH",
+    "Xem danh sách các xe khách": "SELECT * FROM vw_xe_khach",
     "Xem danh sách các tài xế": "SELECT * FROM TAI_XE",
     "Xem danh sách các tuyến xe": "SELECT * FROM TUYEN_XE",
     "Xem danh sách các chuyến xe": """
